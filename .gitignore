@@ -1,0 +1,34 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+env/
+*.so
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Local tooling and editors
+.claude/
+.idea/
+.vscode/
+*.log
+.DS_Store
+Thumbs.db
+
+# Simulation output
+out/
+runs/
+*.sqlite
+*.db

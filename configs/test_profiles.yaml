@@ -1,0 +1,193 @@
+# Three fake test humans with different profiles.
+# DO NOT model these after real people.
+
+humans:
+  - id: "human_a"
+    name: "Jordan"
+    # High performer: high SPECIAL across the board,
+    # high integrity/conscientiousness/mission
+    special:
+      strength: 8
+      perception: 9
+      endurance: 8
+      charisma: 6
+      intelligence: 9
+      agility: 8
+      luck: 6
+    jjdidtiebuckle:
+      justice: 8
+      judgment: 9
+      dependability: 9
+      initiative: 8
+      decisiveness: 7
+      tact: 6
+      integrity: 9        # HIGH — cannot generate cut_corners
+      enthusiasm: 7
+      bearing: 8
+      unselfishness: 7
+      courage: 7
+      knowledge: 9
+      loyalty: 8
+      endurance: 8
+    drives:
+      compensation: 5.0
+      mission: 9.0         # primary driver
+      recognition: 6.0
+      security: 4.0
+      growth: 8.0
+      comfort: 2.0         # low comfort drive
+      social_status: 3.0
+      autonomy: 7.0
+      priority_order:
+        - mission
+        - growth
+        - autonomy
+        - recognition
+        - compensation
+        - security
+        - social_status
+        - comfort
+    inner_world:
+      feelings:
+        job_satisfaction: 0.4
+        motivation: 0.6
+        sense_of_belonging: 0.3
+    work_context:
+      role: "Senior Engineer"
+      responsibilities:
+        - "architecture"
+        - "code_review"
+        - "mentoring"
+      capacity_threshold: 6
+      authority_level: 3
+      skills:
+        - "system_design"
+        - "python"
+        - "leadership"
+
+  - id: "human_b"
+    name: "Casey"
+    # Coaster: low SPECIAL, high comfort drive,
+    # low initiative/dependability
+    special:
+      strength: 3
+      perception: 4
+      endurance: 3
+      charisma: 4
+      intelligence: 5
+      agility: 3
+      luck: 5
+    jjdidtiebuckle:
+      justice: 4
+      judgment: 4
+      dependability: 3      # LOW — can generate reduce_effort
+      initiative: 2         # LOW — no take_initiative
+      decisiveness: 3
+      tact: 4
+      integrity: 3          # LOW — can generate cut_corners
+      enthusiasm: 3
+      bearing: 3
+      unselfishness: 3
+      courage: 2
+      knowledge: 4
+      loyalty: 5
+      endurance: 3
+    drives:
+      compensation: 6.0
+      mission: 2.0          # low mission
+      recognition: 3.0
+      security: 7.0
+      growth: 2.0
+      comfort: 9.0          # HIGH comfort drive
+      social_status: 4.0
+      autonomy: 5.0
+      priority_order:
+        - comfort
+        - security
+        - compensation
+        - autonomy
+        - social_status
+        - recognition
+        - growth
+        - mission
+    inner_world:
+      feelings:
+        job_satisfaction: -0.1
+        motivation: -0.2
+        sense_of_belonging: 0.0
+    work_context:
+      role: "Junior Analyst"
+      responsibilities:
+        - "data_entry"
+        - "report_formatting"
+      capacity_threshold: 4
+      authority_level: 1
+      reports_to: "human_a"
+      skills:
+        - "spreadsheets"
+        - "data_entry"
+
+  - id: "human_c"
+    name: "Riley"
+    # Social butterfly: high charisma/tact/enthusiasm,
+    # moderate everything else
+    special:
+      strength: 5
+      perception: 7
+      endurance: 5
+      charisma: 9           # HIGH charisma
+      intelligence: 6
+      agility: 7
+      luck: 7
+    jjdidtiebuckle:
+      justice: 5
+      judgment: 5
+      dependability: 5
+      initiative: 5
+      decisiveness: 4
+      tact: 9              # HIGH tact
+      integrity: 6
+      enthusiasm: 9        # HIGH enthusiasm
+      bearing: 5
+      unselfishness: 7
+      courage: 4
+      knowledge: 5
+      loyalty: 6
+      endurance: 5
+    drives:
+      compensation: 4.0
+      mission: 5.0
+      recognition: 8.0      # wants to be seen
+      security: 5.0
+      growth: 5.0
+      comfort: 5.0
+      social_status: 7.0    # wants prestige
+      autonomy: 4.0
+      priority_order:
+        - recognition
+        - social_status
+        - mission
+        - growth
+        - comfort
+        - compensation
+        - security
+        - autonomy
+    inner_world:
+      feelings:
+        job_satisfaction: 0.2
+        motivation: 0.3
+        sense_of_belonging: 0.5
+        empathy_level: 0.6
+    work_context:
+      role: "Account Manager"
+      responsibilities:
+        - "client_relations"
+        - "team_coordination"
+        - "presentations"
+      capacity_threshold: 5
+      authority_level: 2
+      reports_to: "human_a"
+      skills:
+        - "communication"
+        - "networking"
+        - "presentation"
