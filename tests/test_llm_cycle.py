@@ -8,8 +8,6 @@ from __future__ import annotations
 import random
 from unittest.mock import patch
 
-import pytest
-
 from digital_human.human import DigitalHuman, Stimulus
 from digital_human.llm import parse_decision
 from digital_human.types import (

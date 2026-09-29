@@ -1,20 +1,18 @@
 """Tests for trait-gated tasks with performance measurement."""
 
-import random
 
 import pytest
 
-from digital_human.human import DigitalHuman, Stimulus
+from digital_human.human import DigitalHuman
 from digital_human.types import (
     JJDIDTIEBUCKLE,
     SPECIAL,
     ActionType,
     Drives,
     Task,
-    TaskResult,
     WorkContext,
 )
-from digital_human.world import World, _get_trait_score
+from digital_human.world import World
 
 
 def _make_human(

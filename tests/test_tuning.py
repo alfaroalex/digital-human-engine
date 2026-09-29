@@ -2,14 +2,12 @@
 delegation cost, behavioral consequences, warmth erosion, social stress,
 confrontation triggering, and confrontation effects."""
 
-import random
-from collections import Counter
 
 import pytest
 
-from digital_human.human import DigitalHuman, Stimulus
+from digital_human.human import DigitalHuman
+from digital_human.types import Action, ActionType, Relationship
 from digital_human.world import World
-from digital_human.types import Action, ActionType, Task, Relationship
 
 
 @pytest.fixture(scope="module")
@@ -64,7 +62,7 @@ class TestRelationshipDifferentiation:
         has_adjustments = False
         for hid in ("human_a", "human_b", "human_c"):
             human = world_1000.humans[hid]
-            for other_id, rel in human.relationships.items():
+            for _other_id, rel in human.relationships.items():
                 if rel.behavioral_adjustments:
                     has_adjustments = True
                     break
@@ -181,7 +179,6 @@ class TestWarmthErosion:
 
 class TestSocialStress:
     def test_social_stress_from_poor_reputation(self, world_1000):
-        hb = world_1000.humans["human_b"]
         stress_traj = world_1000.dataset.get_human_trajectory("human_b", "stress_score")
         late_stress = [s for day, s in stress_traj if day > 200]
         avg_late_stress = sum(late_stress) / len(late_stress) if late_stress else 0
