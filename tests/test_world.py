@@ -5,22 +5,15 @@ contains decision traces, conversation logs, relationship evolution,
 stress trajectories. Verify emergent behavioral differences.
 """
 
-import random
-from collections import Counter
 
 import pytest
 
 from digital_human.human import DigitalHuman
 from digital_human.world import (
-    World,
-    Dataset,
-    DailySnapshot,
-    ConversationEvent,
-    RelationshipSnapshot,
-    TaskGenerationConfig,
     InteractionRule,
+    TaskGenerationConfig,
+    World,
 )
-from digital_human.types import ActionType
 
 
 @pytest.fixture(scope="module")

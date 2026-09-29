@@ -1,4 +1,4 @@
-name: tests
+name: ci
 
 on:
   push:
@@ -18,12 +18,18 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-          cache-dependency-path: requirements.txt
+          cache-dependency-path: pyproject.toml
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -e ".[dev]"
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Type check
+        run: pyright
 
       # LLM-path tests are mock-based, so no Ollama service is needed here.
       - name: Run tests

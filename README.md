@@ -16,14 +16,16 @@ context is an optional layer on top.
 ## Requirements
 
 - Python 3.12
-- Dependencies: `pytest`, `pyyaml` (the engine itself is stdlib-only)
+- Runtime dependency: `pyyaml` (the engine itself is otherwise stdlib-only);
+  dev tools (`pytest`, `ruff`, `pyright`, `pre-commit`) come with the `dev` extra
 - Optional: a local [Ollama](https://ollama.com) instance for the LLM-backed
   cognition paths (default endpoint `http://localhost:11434`)
 
 ## Setup
 
 ```bash
-pip install -r requirements.txt
+pip install -e ".[dev]"
+pre-commit install
 ```
 
 ## Run tests
@@ -32,9 +34,15 @@ pip install -r requirements.txt
 pytest
 ```
 
-The full suite takes roughly three minutes — the world-simulation tests are
-slow by nature, not hung. Every LLM-path test is mock-based, so no Ollama
-instance is required to run the suite.
+The full suite takes a few seconds. Every LLM-path test is mock-based, so no
+Ollama instance is required to run the suite.
+
+Lint and type-check before committing:
+
+```bash
+ruff check .
+pyright
+```
 
 ## Layout
 

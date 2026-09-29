@@ -10,7 +10,6 @@ processes its effects (task dequeuing, conversation initiation, etc.).
 
 from __future__ import annotations
 
-import math
 import random
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -21,17 +20,17 @@ import yaml
 from digital_human.conversation import (
     Conversation,
     apply_conversation_result,
-    recompute_from_logs,
     apply_recomputed_relationship,
+    recompute_from_logs,
 )
 from digital_human.human import DigitalHuman, Stimulus
 from digital_human.types import (
+    SOCIAL_ACTIONS,
+    SPECIAL_TRAIT_NAMES,
     ActionType,
     Episode,
     LLMConfig,
     Relationship,
-    SOCIAL_ACTIONS,
-    SPECIAL_TRAIT_NAMES,
     Task,
     TaskResult,
 )
@@ -259,9 +258,7 @@ class World:
         capacity = human.work_context.capacity_threshold
         queue_len = len(human.work_context.task_queue)
 
-        if action.action_type == ActionType.PUSH_THROUGH:
-            tasks_to_process = min(queue_len, capacity + 2)
-        elif action.action_type == ActionType.CUT_CORNERS:
+        if action.action_type in (ActionType.PUSH_THROUGH, ActionType.CUT_CORNERS):
             tasks_to_process = min(queue_len, capacity + 2)
         else:
             tasks_to_process = min(queue_len, capacity)
@@ -347,9 +344,8 @@ class World:
                 speeds.append(0.3)
                 details_parts.append(f"could not handle {trait_name}")
 
-            if gap <= -2:
-                if self.rng.random() < 0.5:
-                    error_count += 1
+            if gap <= -2 and self.rng.random() < 0.5:
+                error_count += 1
 
             trait_matches.append(min(1.0, score / max(1, required)))
 
@@ -478,6 +474,9 @@ class World:
 
         from digital_human.llm import generate_tasks
 
+        if self.llm_config is None:
+            return
+
         for human in self.human_list:
             role = human.work_context.role
             if role in self._task_template_cache:
@@ -576,15 +575,20 @@ class World:
                     conversations_today.append((human_id, target_id, reason))
 
         for rule in self.interaction_rules:
-            if self.sim_day % rule.frequency == 0:
-                if rule.human_a_id in self.humans and rule.human_b_id in self.humans:
-                    conversations_today.append(
-                        (rule.human_a_id, rule.human_b_id, rule.reason)
-                    )
+            if self.sim_day % rule.frequency == 0 and (
+                rule.human_a_id in self.humans and rule.human_b_id in self.humans
+            ):
+                conversations_today.append(
+                    (rule.human_a_id, rule.human_b_id, rule.reason)
+                )
 
         seen_pairs: set[tuple[str, str]] = set()
         for initiator_id, receiver_id, reason in conversations_today:
-            pair = tuple(sorted([initiator_id, receiver_id]))
+            pair = (
+                (initiator_id, receiver_id)
+                if initiator_id <= receiver_id
+                else (receiver_id, initiator_id)
+            )
             if pair in seen_pairs:
                 continue
             seen_pairs.add(pair)
@@ -665,7 +669,7 @@ class World:
                 bond_type = "stranger"
                 if logs:
                     recomputed = recompute_from_logs(logs, "a")
-                    bond_type = recomputed.get("bond_type", "stranger")
+                    bond_type = recomputed["bond_type"]
 
                 self.dataset.relationship_snapshots.append(RelationshipSnapshot(
                     sim_day=self.sim_day,
@@ -729,7 +733,6 @@ class World:
                         continue
                     if other.human_id not in human.relationships:
                         continue
-                    rel = human.relationships[other.human_id]
                     if other.human_id in human.relationships:
                         other_rel = other.relationships.get(human_id)
                         if other_rel is None:

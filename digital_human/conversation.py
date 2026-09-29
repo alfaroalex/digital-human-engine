@@ -7,8 +7,8 @@ get +3 filter (capped at 10, overflow to receiver's running total).
 from __future__ import annotations
 
 import random
-from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, TypedDict
 
 from digital_human.types import (
     Belief,
@@ -405,10 +405,22 @@ def _exchange_quality(entry: ExchangeEntry, perspective: str) -> tuple[float, fl
     return similarity, magnitude
 
 
+class RecomputedRelationship(TypedDict):
+    trust: float
+    respect: float
+    warmth: float
+    cooperation: float
+    familiarity: float
+    gratitude: float
+    closeness: float
+    bond_type: str
+    conversation_history_score: float
+
+
 def recompute_from_logs(
     logs: list[ConversationRecord],
     perspective: str = "a",
-) -> dict[str, float]:
+) -> RecomputedRelationship:
     if not logs:
         return {
             "trust": 0.5, "respect": 0.5, "cooperation": 0.5,
@@ -463,21 +475,24 @@ def recompute_from_logs(
     interaction_familiarity = min(1.0, len(logs) * 0.05)
     result["familiarity"] = max(result["familiarity"], interaction_familiarity)
 
+    avg_similarity = 0.0
+    avg_magnitude = 0.0
     if total_exchanges > 0:
         avg_similarity = total_similarity / total_exchanges
         avg_magnitude = total_magnitude / total_exchanges
-        result["closeness"] = avg_similarity * avg_magnitude
-    else:
-        result["closeness"] = 0.0
+    result["closeness"] = avg_similarity * avg_magnitude
 
-    result["bond_type"] = _classify_bond(
-        avg_similarity if total_exchanges > 0 else 0.0,
-        avg_magnitude if total_exchanges > 0 else 0.0,
-        len(logs),
-    )
-
-    result["conversation_history_score"] = total_history_score
-    return result
+    return {
+        "trust": result["trust"],
+        "respect": result["respect"],
+        "warmth": result["warmth"],
+        "cooperation": result["cooperation"],
+        "familiarity": result["familiarity"],
+        "gratitude": result["gratitude"],
+        "closeness": result["closeness"],
+        "bond_type": _classify_bond(avg_similarity, avg_magnitude, len(logs)),
+        "conversation_history_score": total_history_score,
+    }
 
 
 def _classify_bond(avg_similarity: float, avg_magnitude: float, n_conversations: int) -> str:
@@ -496,7 +511,7 @@ def _classify_bond(avg_similarity: float, avg_magnitude: float, n_conversations:
 def apply_recomputed_relationship(
     human: DigitalHuman,
     other_id: str,
-    recomputed: dict[str, float],
+    recomputed: RecomputedRelationship,
     sim_day: int,
 ) -> None:
     if other_id not in human.relationships:
@@ -510,15 +525,13 @@ def apply_recomputed_relationship(
     # Previously the deltas were applied live daily AND the full
     # ledger re-applied at every recompute, which double-counted and
     # pegged dimensions (e.g. respect) at 1.0 permanently.
-    rel.trust = recomputed.get("trust", rel.trust)
-    rel.respect = recomputed.get("respect", rel.respect)
-    rel.cooperation = recomputed.get("cooperation", rel.cooperation)
-    rel.familiarity = recomputed.get("familiarity", rel.familiarity)
-    rel.warmth = recomputed.get("warmth", rel.warmth)
-    rel.gratitude = recomputed.get("gratitude", rel.gratitude)
-    rel.conversation_history_score = recomputed.get(
-        "conversation_history_score", rel.conversation_history_score
-    )
+    rel.trust = recomputed["trust"]
+    rel.respect = recomputed["respect"]
+    rel.cooperation = recomputed["cooperation"]
+    rel.familiarity = recomputed["familiarity"]
+    rel.warmth = recomputed["warmth"]
+    rel.gratitude = recomputed["gratitude"]
+    rel.conversation_history_score = recomputed["conversation_history_score"]
     rel.last_interaction_day = sim_day
 
     for dim, adj in rel.behavioral_adjustments.items():
@@ -526,8 +539,7 @@ def apply_recomputed_relationship(
             current = getattr(rel, dim)
             setattr(rel, dim, max(0.0, min(1.0, current + adj)))
 
-    bond_type = recomputed.get("bond_type", "stranger")
-    rel.opinion = _generate_opinion(rel, bond_type)
+    rel.opinion = _generate_opinion(rel, recomputed["bond_type"])
 
 
 def _generate_opinion(rel: Relationship, bond_type: str) -> str:

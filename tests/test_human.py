@@ -28,12 +28,10 @@ from digital_human.types import (
     ActionType,
     CopingStyle,
     Drives,
-    InnerWorld,
+    Episode,
     Memory,
     Option,
     Task,
-    WorkContext,
-    Episode,
 )
 
 
@@ -221,7 +219,7 @@ class TestDailyCycle:
         human_a.perceive(stimulus)
         queue_after_perceive = len(human_a.work_context.task_queue)
         human_a.understand()
-        action = human_a.act()
+        human_a.act()
         queue_after_act = len(human_a.work_context.task_queue)
         # perceive adds tasks, but act does NOT remove them
         assert queue_after_perceive == queue_before + 3

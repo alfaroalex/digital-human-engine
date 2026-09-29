@@ -15,7 +15,6 @@ from digital_human.types import (
     SPECIAL,
     ActionType,
     Drives,
-    Episode,
     LLMConfig,
     WorkContext,
 )
@@ -157,7 +156,7 @@ def test_world_calls_internal_dialogue(mock_gen):
 
     for human in w.human_list:
         assert len(human.memory_nodes) == 3
-        for day, text in human.memory_nodes:
+        for _day, text in human.memory_nodes:
             assert text == "Today felt routine."
 
 

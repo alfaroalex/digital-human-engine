@@ -13,7 +13,6 @@ from digital_human.types import (
     SPECIAL_TRAIT_NAMES,
     Action,
     ActionType,
-    Belief,
     Concern,
     CopingStyle,
     Drives,
@@ -23,7 +22,6 @@ from digital_human.types import (
     Memory,
     Option,
     Relationship,
-    SOCIAL_ACTIONS,
     StressState,
     Task,
     WorkContext,
@@ -351,15 +349,19 @@ class DigitalHuman:
             recent_nodes = [text for _, text in self.memory_nodes[-5:]]
             combined = " ".join(recent_nodes).lower()
             for opt in options:
-                if opt.action_type in (ActionType.REDUCE_EFFORT, ActionType.REST):
-                    if re.search(r"\bquit\b|\bquitting\b|\bleaving\b", combined):
-                        opt.score += 2.0
-                if opt.action_type == ActionType.CONFRONT:
-                    if re.search(r"\bconfront\b|\bfed up\b", combined):
-                        opt.score += 2.0
-                if opt.action_type in (ActionType.PROCESS_TASK, ActionType.OFFER_HELP):
-                    if re.search(r"\bgrateful\b|\bgood day\b", combined):
-                        opt.score += 2.0
+                if opt.action_type in (ActionType.REDUCE_EFFORT, ActionType.REST) and re.search(
+                    r"\bquit\b|\bquitting\b|\bleaving\b", combined
+                ):
+                    opt.score += 2.0
+                if opt.action_type == ActionType.CONFRONT and re.search(
+                    r"\bconfront\b|\bfed up\b", combined
+                ):
+                    opt.score += 2.0
+                if opt.action_type in (
+                    ActionType.PROCESS_TASK,
+                    ActionType.OFFER_HELP,
+                ) and re.search(r"\bgrateful\b|\bgood day\b", combined):
+                    opt.score += 2.0
 
         options.sort(key=lambda o: -o.score)
         self._current_options = options
@@ -780,9 +782,10 @@ class DigitalHuman:
 
         j = self.jjdidtiebuckle
 
-        if chosen.action_type == ActionType.CONFRONT:
-            if stress_ratio > 0.7 or j.tact <= 4:
-                return "aggressive_confrontation"
+        if chosen.action_type == ActionType.CONFRONT and (
+            stress_ratio > 0.7 or j.tact <= 4
+        ):
+            return "aggressive_confrontation"
 
         if stress_ratio > 0.8 and self.drives.comfort >= 7:
             return "quit"

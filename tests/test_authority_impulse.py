@@ -7,12 +7,10 @@ import pytest
 import yaml
 
 from digital_human.human import DigitalHuman, Stimulus
-from digital_human.world import World
 from digital_human.types import (
     JJDIDTIEBUCKLE,
     SPECIAL,
     ActionType,
-    CopingStyle,
     Drives,
     Task,
     WorkContext,
@@ -120,7 +118,7 @@ class TestAuthorityConfrontScore:
         human_b.relationships["human_a"] = __import__(
             "digital_human.types", fromlist=["Relationship"]
         ).Relationship(target_id="human_a", respect=0.1)
-        human_b.jjdidtiebuckle  # Has courage=2, won't normally confront
+        # human_b has courage=2, won't normally confront
 
         human_high_courage = DigitalHuman(
             human_id="test_courage",
