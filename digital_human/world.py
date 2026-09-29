@@ -258,7 +258,7 @@ class World:
         capacity = human.work_context.capacity_threshold
         queue_len = len(human.work_context.task_queue)
 
-        if action.action_type == ActionType.PUSH_THROUGH or action.action_type == ActionType.CUT_CORNERS:
+        if action.action_type in (ActionType.PUSH_THROUGH, ActionType.CUT_CORNERS):
             tasks_to_process = min(queue_len, capacity + 2)
         else:
             tasks_to_process = min(queue_len, capacity)
@@ -578,9 +578,9 @@ class World:
             if self.sim_day % rule.frequency == 0 and (
                 rule.human_a_id in self.humans and rule.human_b_id in self.humans
             ):
-                    conversations_today.append(
-                        (rule.human_a_id, rule.human_b_id, rule.reason)
-                    )
+                conversations_today.append(
+                    (rule.human_a_id, rule.human_b_id, rule.reason)
+                )
 
         seen_pairs: set[tuple[str, str]] = set()
         for initiator_id, receiver_id, reason in conversations_today:
